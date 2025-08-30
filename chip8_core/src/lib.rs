@@ -1,5 +1,4 @@
-use core::borrow;
-use std::str::pattern::CharArrayRefSearcher;
+use rand::random;
 
 const FONTSET_SIZE: usize = 80;
 
@@ -277,6 +276,14 @@ impl Emu {
             (0xB, _, _, _) => {
                 let nnn = op & 0xFFF;
                 self.pc = (self.v_reg[0] as u16) + nnn;
+            }
+
+            // VX = rand() & NN
+            (0xC, _, _, _) => {
+                let x = digit2 as usize;
+                let nn = (op & 0xFF) as u8;
+                let rng: u8 = random();
+                self.v_reg[x] = rng & nn;
             }
 
             (_, _, _, _) => unimplemented!("Unimplemented opcode: {op}"),
